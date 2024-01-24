@@ -23,7 +23,7 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path='/login' element={<LoginForm/> }/>
+          <Route path='*' element={<LoginForm/> }/>
           <Route path='/register' element={<RegisterForm/> }/>
           <Route path='/personalInfo' element={<PersonalInfo/> }/>
           <Route path='/changeInfo' element={<ChangelInfo/> }/>
@@ -32,7 +32,7 @@ function App() {
           <Route path='/usuarios' element={<Usuarios/> }/>
           <Route path='/bitacora' element={<Bitacora/> }/>
           <Route path='/pagina' element={<Pagina/> }/>
-          <Route path='*' element={<PaginaNoEncontrada/> }/>
+          {/* <Route path='*' element={<PaginaNoEncontrada/> }/> */}
         </Routes>
       </BrowserRouter>
     </>
@@ -40,3 +40,36 @@ function App() {
 }
 
 export default App
+
+// public function login(Request $request)
+//     {
+//         try {
+//             $credentials = $request->only('email', 'password');
+//             $user = Usuario::where('email', $credentials['email'])->first();
+//             $user->makeVisible('contrasena');
+//             // $credentials['password'] = bcrypt($request->password);
+//             //$token = auth()->attempt($credentials);
+//             //$token = JWTAuth::fromUser($user);
+
+//             // if (!$token = JWTAuth::attempt($credentials)) {
+//             //     return response()->json(['error' => 'Unauthorized'], 401);
+//             // }
+//             if (Hash::check($request->password, $user->contrasena)) {
+//                 // Autenticación exitosa
+//                 //return response()->json(['message' => JWTAuth::fromUser($user)]);
+//                 $token = JWTAuth::fromUser($user);
+//                 return response()->json([
+//                     'message' => 'Usuario registrado exitosamente!',
+//                     //'user' => $usuario,
+//                     'access_token' => $token
+//                 ], 201);
+//             } else {
+//                 // Credenciales incorrectas
+//                 return response()->json(['error' => 'Unauthorized'], 401);
+//             }
+//             // return $this->respondWithToken($token);
+
+//         } catch (\Exception $e) {
+//             return response()->json(['error' => $e->getMessage()], 500);
+//         }
+//     }

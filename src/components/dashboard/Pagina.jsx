@@ -8,8 +8,9 @@ export const Pagina = () => {
     const [urlValue, setRolValue] = useState('');
     const [nombreValue, setNombreValue] = useState('');
     const [descripcionValue, setDescripcionValue] = useState('');
-
+    const [paginas, setPaginas] = useState([]);
     const [tokenExists, setTokenExists] = useState(false);
+    const [addPagina, setAddPagina] = useState(false);
 
     useEffect(() => {
         const rawToken = sessionStorage.getItem('token');
@@ -20,6 +21,58 @@ export const Pagina = () => {
             setTokenExists(true);
         }
     }, [navigate]);
+
+    // listar paginas
+    useEffect(() => {
+        const fetchPaginas = async () => {
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/listPage');
+                if (!response.ok) {
+                    throw new Error('Error al obtener los páginas');
+                }
+                const data = await response.json();
+                setPaginas(data)
+            } catch (error) {
+                console.error('Error de red:', error);
+            }
+        }
+        fetchPaginas();
+    }, [addPagina]);
+    
+    //agregar paginas
+    const handleAddPag = async (e) => {
+        e.preventDefault();
+    
+        try {
+            const apiUrl = 'http://127.0.0.1:8000/api/addPagina';
+    
+            const requestBody = {
+                url: urlValue, 
+                nombre: nombreValue, 
+                descripcion: descripcionValue, 
+            }
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestBody),
+            });
+    
+            // console.log('Estado de la respuesta:', response.status);
+    
+            if (response.status === 201) {
+                const data = await response.json();
+                setAddPagina(!addPagina);
+                // console.log('Nueva página creada:', data);
+            } else {
+                // console.error('Error al crear la página');
+            }
+        } catch (error) {
+            // console.error('Error en la llamada a la API:', error);
+        }
+        closeModal();
+    };
 
     //cerrar session
     const handleLogout = async () => {
@@ -49,13 +102,6 @@ export const Pagina = () => {
         setIsModalOpen(false);
     };
 
-    const handleFormSubmit = (event) => {
-        // Lógica para manejar el envío del formulario
-        event.preventDefault();
-        // ... (puedes agregar lógica adicional aquí)
-        // Cierra el modal después de enviar el formulario
-        closeModal();
-    };
     return tokenExists ? (
         <>
             <div className="min-h-screen bg-gray-50/50 ">
@@ -202,42 +248,37 @@ export const Pagina = () => {
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            {paginas.map((pagina) =>
+                                                <tr key={pagina.id} className=" hover:bg-[#c3dff9]">
+                                                    <td className="py-2 px-5 border-b border-blue-gray-50">
+                                                        <p className="block antialiased font-sans text-xs text-blue-gray-900 font-bold">
+                                                            {pagina.id}</p>
+                                                    </td>
+                                                    <td className="py-2 px-5 border-b border-blue-gray-50">
+                                                        <p
+                                                            className="block antialiased font-sans text-xs  text-blue-gray-900 font-bold">
+                                                            {pagina.url}</p>
+                                                    </td>
+                                                    <td className="py-2 px-5 border-b border-blue-gray-50">
+                                                        <p
+                                                            className="block antialiased font-sans text-xs  text-blue-gray-900 font-bold">
+                                                            {pagina.nombre}</p>
+                                                    </td>
 
-                                            <tr className=" hover:bg-[#c3dff9]">
-                                                <td className="py-2 px-5 border-b border-blue-gray-50">
-                                                    <p className="block antialiased font-sans text-xs text-blue-gray-900 font-bold">
-                                                        ghghfghfgh</p>
-                                                </td>
-                                                <td className="py-2 px-5 border-b border-blue-gray-50">
-                                                    <p
-                                                        className="block antialiased font-sans text-xs  text-blue-gray-900 font-bold">
-                                                        fhfghfhfg</p>
-                                                </td>
-                                                <td className="py-2 px-5 border-b border-blue-gray-50 ">
+                                                    <td className="py-2 px-5 border-b border-blue-gray-50">
 
-                                                    <p
-                                                        className="inline-block py-[2px] px-[6px] rounded-md antialiased font-sans text-xs capitalize text-white font-bold bg-[#53b164]">
-                                                        Activo</p>
+                                                        <p
+                                                            className="block antialiased font-sans text-xs  text-blue-gray-900 font-bold">
+                                                            {pagina.descripcion}</p>
+                                                    </td>
+                                                    <td className="py-2 px-5 border-b border-blue-gray-50">
 
-                                                    <p
-                                                        className="inline-block py-[2px] px-[6px] rounded-md antialiased font-sans text-xs capitalize text-white font-bold bg-[#ce464c]">
-                                                        Inactivo</p>
-                                                </td>
-
-                                                <td className="py-2 px-5 border-b border-blue-gray-50">
-
-                                                    <p
-                                                        className="block antialiased font-sans text-xs  text-blue-gray-900 font-bold">
-                                                        fhfghfhfg</p>
-                                                </td>
-                                                <td className="py-2 px-5 border-b border-blue-gray-50">
-
-                                                    <p
-                                                        className="block antialiased font-sans text-xs  text-blue-gray-900 font-bold">
-                                                        fhfghfhfg</p>
-                                                </td>
-                                            </tr>
-
+                                                        <p
+                                                            className="block antialiased font-sans text-xs  text-blue-gray-900 font-bold">
+                                                            {pagina.created_at}</p>
+                                                    </td>
+                                                </tr>
+                                            )}
                                         </tbody>
                                     </table>
                                 </div>
@@ -274,7 +315,7 @@ export const Pagina = () => {
             >
                 <h2 className='font-semibold mb-3'>Agregar Nuevo Página</h2>
 
-                <form onSubmit={handleFormSubmit}>
+                <form onSubmit={handleAddPag}>
                     <div className="relative w-full min-w-[200px] h-10 mb-4">
                         <input
                             className="peer w-full h-full bg-transparent text-gray-700 font-sans font-normal outline outline-0 focus:outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-400 placeholder-shown:border-t-blue-gray-400 border focus:border-2 border-t-transparent focus:border-t-transparent text-sm px-3 py-5 rounded-[7px] border-blue-gray-200 focus:border-blue-500"

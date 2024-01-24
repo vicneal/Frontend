@@ -13,8 +13,9 @@ export const Usuarios = () => {
     const [pApeValue, setpApeValuee] = useState('');
     const [sApeValue, setsApeValue] = useState('');
     const [fechaValue, setfechaValue] = useState('');
-
+    const [usuarios, setUsuarios] = useState([]);
     const [tokenExists, setTokenExists] = useState(false);
+    const [estado, setEstado] = useState(false);
 
     useEffect(() => {
         const rawToken = sessionStorage.getItem('token');
@@ -25,6 +26,58 @@ export const Usuarios = () => {
             setTokenExists(true);
         }
     }, [navigate]);
+
+    //listar usuarios
+    useEffect(() => {
+        const obtenerUsuarios = async () => {
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/auth/listUsuario');
+
+                if (!response.ok) {
+                    throw new Error('Error al obtener la lista de usuarios');
+                }
+
+                const data = await response.json();
+                setUsuarios(data);
+            } catch (error) {
+                console.error('Error de red:', error);
+            }
+        };
+
+        obtenerUsuarios();
+    }, [estado]);
+
+    //cambiar estado
+    const handleEstadoClick = async (id, estado) => {
+        try {
+          const response = await fetch(`http://127.0.0.1:8000/api/auth/usuarios/${id}/estado`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              estado: !estado, 
+            }),
+          });
+    
+          if (!response.ok) {
+            throw new Error('Error al actualizar el estado del usuario');
+          }
+    
+          // Actualizar la lista de usuarios después de cambiar el estado
+          const updatedUsuarios = usuarios.map(usuario => {
+            if (usuario.id === id) {
+              return { ...usuario, habilitado: !estado };
+            }
+            return usuario;
+          });
+    
+          setUsuarios(updatedUsuarios);
+          setEstado(!estado);
+        } catch (error) {
+          console.error('Error al actualizar el estado del usuario:', error);
+        }
+      };
 
     //cerrar session
     const handleLogout = async () => {
@@ -60,6 +113,7 @@ export const Usuarios = () => {
         // Cierra el modal después de enviar el formulario
         closeModal();
     };
+    // console.log(usuarios);
     return tokenExists ? (
         <>
             <div className="min-h-screen bg-gray-50/50 ">
@@ -211,61 +265,54 @@ export const Usuarios = () => {
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            {usuarios.map((usuario, index) => (
+                                                <tr key={usuario.id} className=" hover:bg-[#c3dff9]" >
+                                                    <td className="py-2 px-5 border-b border-blue-gray-50">
+                                                        <p className="block antialiased font-sans text-xs text-blue-gray-900 font-bold">
+                                                            {index += 1} </p>
+                                                    </td>
+                                                    <td className="py-2 px-5 border-b border-blue-gray-50">
+                                                        <p
+                                                            className="block antialiased font-sans text-xs  text-blue-gray-900 font-bold">
+                                                            {usuario.email}</p>
+                                                    </td>
+                                                    <td className="py-2 px-5 border-b border-blue-gray-50">
+                                                        <p
+                                                            className={`inline-block py-[2px] px-[6px] rounded-md antialiased font-sans text-xs capitalize text-white font-bold ${usuario.habilitado === 1 ? ' bg-[#53b164]' : 'bg-[#ce464c]'}`}>
+                                                            {usuario.habilitado === 1 ? 'Activo' : 'Inactivo'}
+                                                        </p>
+                                                    </td>
 
-                                            <tr className=" hover:bg-[#c3dff9]">
-                                                <td className="py-2 px-5 border-b border-blue-gray-50">
-                                                    <p className="block antialiased font-sans text-xs text-blue-gray-900 font-bold">
-                                                        ghghfghfgh</p>
-                                                </td>
-                                                <td className="py-2 px-5 border-b border-blue-gray-50">
-                                                    <p
-                                                        className="block antialiased font-sans text-xs  text-blue-gray-900 font-bold">
-                                                        fhfghfhfg</p>
-                                                </td>
-                                                <td className="py-2 px-5 border-b border-blue-gray-50 ">
+                                                    <td className="py-2 px-5 border-b border-blue-gray-50">
 
-                                                    <p
-                                                        className="inline-block py-[2px] px-[6px] rounded-md antialiased font-sans text-xs capitalize text-white font-bold bg-[#53b164]">
-                                                        Activo</p>
+                                                        <p
+                                                            className="block antialiased font-sans text-xs  text-blue-gray-900 font-bold">
+                                                            {usuario.created_at}</p>
+                                                    </td>
+                                                    <td className="py-2 px-5 border-b border-blue-gray-50">
 
-                                                    <p
-                                                        className="inline-block py-[2px] px-[6px] rounded-md antialiased font-sans text-xs capitalize text-white font-bold bg-[#ce464c]">
-                                                        Inactivo</p>
-                                                </td>
+                                                        <p
+                                                            className="block antialiased font-sans text-xs  text-blue-gray-900 font-bold">
+                                                            {usuario.idrol}</p>
+                                                    </td>
+                                                    <td className="py-2 px-5 border-b border-blue-gray-50">
 
-                                                <td className="py-2 px-5 border-b border-blue-gray-50">
+                                                        <p
+                                                            className="block antialiased font-sans text-xs  text-blue-gray-900 font-bold">
+                                                            {usuario.updated_at}</p>
+                                                    </td>
+                                                    <td className="py-2 px-5 border-b border-blue-gray-50">
 
-                                                    <p
-                                                        className="block antialiased font-sans text-xs  text-blue-gray-900 font-bold">
-                                                        fhfghfhfg</p>
-                                                </td>
-                                                <td className="py-2 px-5 border-b border-blue-gray-50">
+                                                        <button
+                                                            onClick={() => handleEstadoClick(usuario.id, usuario.habilitado)}
+                                                            className={` hover:font-semibold ${usuario.habilitado === 1 ? 'text-red-900' : ' text-green-900'}`}>
 
-                                                    <p
-                                                        className="block antialiased font-sans text-xs  text-blue-gray-900 font-bold">
-                                                        fhfghfhfg</p>
-                                                </td>
-                                                <td className="py-2 px-5 border-b border-blue-gray-50">
-
-                                                    <p
-                                                        className="block antialiased font-sans text-xs  text-blue-gray-900 font-bold">
-                                                        fhfghfhfg</p>
-                                                </td>
-                                                <td className="py-2 px-5 border-b border-blue-gray-50">
-
-                                                    <a href="#"
-                                                        className='text-red-900'>
-                                                        <i className="fa-solid fa-x text-xs mr-2"></i>
-                                                        Inactivar
-                                                    </a>
-                                                    <a href="#"
-                                                        className='text-green-900'>
-                                                        <i className="fa-solid fa-plus text-xs mr-2"></i>
-                                                        Activar
-                                                    </a>
-                                                </td>
-                                            </tr>
-
+                                                            {usuario.habilitado === 1 ? <i className="fa-solid fa-x text-xs mr-1"></i> : <i className="fa-solid fa-plus text-xs mr-1"></i>}
+                                                            {usuario.habilitado === 1 ? 'Inactivar' : 'Activar'}
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
                                         </tbody>
                                     </table>
                                 </div>

@@ -8,8 +8,21 @@ export const Roles = () => {
     const navigate = useNavigate();
     const [tokenExists, setTokenExists] = useState(false);
     const [roles, setRoles] = useState([]);
-    // const [estado, setEstado] = useState('');
+    const [estado, setEstado] = useState(false);
 
+    useEffect(() => {
+        const rawToken = sessionStorage.getItem('token');
+
+        if (rawToken == null) {
+            navigate('/login');
+        } else {
+            setTokenExists(true);
+        }
+
+
+    }, [navigate]);
+
+    //listar roles
     useEffect(() => {
         const fetchRoles = async () => {
             try {
@@ -24,21 +37,9 @@ export const Roles = () => {
             }
         };
         fetchRoles();
-    }, [rol]);
+    }, [estado,rol]);
 
-    useEffect(() => {
-        const rawToken = sessionStorage.getItem('token');
-
-        if (rawToken == null) {
-            navigate('/login');
-        } else {
-            setTokenExists(true);
-        }
-
-
-    }, [navigate]);
-
-
+//agregar rol
     const handleAddRol = async (e) => {
         e.preventDefault(); // Evita el envío del formulario predeterminado
 
@@ -92,7 +93,7 @@ export const Roles = () => {
     const closeModal = () => {
         setIsModalOpen(false);
     };
-
+// cambiar estado
     const handleButtonClick = async (id, estado) => {
         try {
           const response = await fetch(`http://127.0.0.1:8000/api/roles/${id}/estado`, {
@@ -113,6 +114,7 @@ export const Roles = () => {
             });
     
             setRoles(updatedRoles);
+            setEstado(estado);
           } else {
             console.error('Error al actualizar el estado');
           }
@@ -120,7 +122,7 @@ export const Roles = () => {
           console.error('Error en la solicitud:', error);
         }
       };
-
+// console.log(roles);
     return tokenExists ? (
         <>
 
