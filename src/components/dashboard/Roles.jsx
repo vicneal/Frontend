@@ -14,7 +14,7 @@ export const Roles = () => {
         const rawToken = sessionStorage.getItem('token');
 
         if (rawToken == null) {
-            navigate('/login');
+            navigate('/');
         } else {
             setTokenExists(true);
         }

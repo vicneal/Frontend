@@ -23,7 +23,7 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path='*' element={<LoginForm/> }/>
+          <Route path='/' element={<LoginForm/> }/>
           <Route path='/register' element={<RegisterForm/> }/>
           <Route path='/personalInfo' element={<PersonalInfo/> }/>
           <Route path='/changeInfo' element={<ChangelInfo/> }/>
@@ -32,7 +32,7 @@ function App() {
           <Route path='/usuarios' element={<Usuarios/> }/>
           <Route path='/bitacora' element={<Bitacora/> }/>
           <Route path='/pagina' element={<Pagina/> }/>
-          {/* <Route path='*' element={<PaginaNoEncontrada/> }/> */}
+          <Route path='*' element={<PaginaNoEncontrada/> }/>
         </Routes>
       </BrowserRouter>
     </>

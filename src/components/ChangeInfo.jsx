@@ -17,7 +17,7 @@ export const ChangelInfo = () => {
       const rawToken = sessionStorage.getItem('token');
 
       if (rawToken == null) {
-        navigate('/login');
+        navigate('/');
       } else {
         setTokenExists(true);
       }

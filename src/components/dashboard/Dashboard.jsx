@@ -31,7 +31,7 @@ export const Dashboard = () => {
 
         if (response.ok) {
             sessionStorage.removeItem('token');
-            navigate('/login');
+            navigate('/');
         }
         const data = await response.json();
     };
