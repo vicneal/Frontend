@@ -60,10 +60,10 @@ export const LoginForm = () => {
       
           if (data && data.access_token) {
             sessionStorage.setItem('token', data.access_token);
-            //sessionStorage.setItem('idUser', data.user.id);
+
             navigate('/personalInfo');
           } else {
-            // console.error('Error al iniciar sesión:', data);
+
             alert('Error al iniciar sesión');
           }
         } catch (error) {

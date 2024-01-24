@@ -41,7 +41,7 @@ export const Roles = () => {
 
 //agregar rol
     const handleAddRol = async (e) => {
-        e.preventDefault(); // Evita el envío del formulario predeterminado
+        e.preventDefault(); 
 
         try {
             const response = await fetch('http://127.0.0.1:8000/api/addRol', {

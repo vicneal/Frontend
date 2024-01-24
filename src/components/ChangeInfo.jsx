@@ -47,15 +47,15 @@ export const ChangelInfo = () => {
             <header>
                 <nav className="bg-gray-500 p-4 ">
                     <div className="container mx-auto flex items-center justify-between w-[90%] ">
-                        {/* Logo o nombre de la aplicación */}
+                     
                         <img src={devLogo} className="w-[170px]" alt=" logo" />
 
-                        {/* Enlaces de navegación */}
+                      
                         <ul className="flex space-x-4 items-center">
                             <li><p className='text-white font-semibold text-xs'>NOMBRE DEL USUARIO</p></li>
                             <li className="relative group">
                                 <a href="#" className="text-white font-semibold text-sm hover:underline uppercase "><i className="fa-solid fa-gear"></i> Opciones</a>
-                                {/* Dropdown con retraso y ancho personalizado */}
+                               
                                 <ul className="absolute hidden bg-white text-black group-hover:block transition-delay-1000 w-[150px] ">
                                     <li className="hover:bg-gray-100 p-2 pl-3 font-semibold"><a href="/personalInfo" className='text-gray-600 font-bold text-sm flex gap-3 items-center'><i className="fa-solid fa-user "></i> <span>Mi Perfil</span></a></li>
                                     <li className="hover:bg-gray-100 p-2 pl-3 font-semibold"><a href="/dashboard" className='text-gray-600 font-bold text-sm flex gap-3 items-center'> <i className="fa-solid fa-house"></i><span>Dashboard</span></a></li>
